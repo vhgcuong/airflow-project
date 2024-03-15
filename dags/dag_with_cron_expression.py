@@ -10,14 +10,13 @@ default_args = {
 }
 
 with DAG(
-    dag_id='dag_with_catchup_backfill_v02',
+    dag_id='dag_with_cron_expression_v05',
     default_args=default_args,
     start_date=datetime(2024, 3, 1),
-    schedule="@daily",
-    catchup=False,
+    schedule='0 4 * * Mon-Fri',
     tags=["cuongvh", "airflow_2.6"],
 ) as dag:
     task1 = BashOperator(
         task_id='task1',
-        bash_command="echo hello world, this is the first task!"
+        bash_command="echo dag with cron expression"
     )
