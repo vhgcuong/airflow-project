@@ -8,10 +8,11 @@ default_args = {
     'retry_delay': timedelta(minutes=5)
 }
 
-@dag(dag_id='dag_with_taskflow_api_v02',
+@dag(dag_id='dag_with_taskflow_api_v03',
      default_args=default_args,
      start_date=datetime(2024, 3, 1),
-     schedule='@daily')
+     schedule='@daily',
+     tags=["cuongvh", "airflow_2.6"])
 def hello_world_etl():
 
     @task(multiple_outputs=True)
