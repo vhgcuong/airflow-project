@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 
 default_args = {
     'owner': 'cuongvh',
@@ -19,7 +20,7 @@ def get_matplotlib():
 
 with DAG(
     default_args=default_args,
-    dag_id='dag_with_python_dependencies_v11',
+    dag_id='dag_with_python_dependencies_v13',
     start_date=datetime(2024, 3, 1),
     schedule='@daily',
     catchup=True,
@@ -35,4 +36,11 @@ with DAG(
         python_callable=get_matplotlib
     )
 
+    bash_vim = BashOperator(
+        task_id='bash_vim',
+        bash_command="vim --version"
+    )
+
     get_sklearn >> get_matplotlib
+
+    bash_vim
