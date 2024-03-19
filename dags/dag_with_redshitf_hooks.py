@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow.models import DAG
-from airflow.providers.amazon.aws.operators.redshift_sql import RedshiftSQLOperator
+
+from airflow.providers.amazon.aws.operators.redshift_data import RedshiftDataOperator, RedshiftDataHook, RedshiftDataTrigger
 
 default_args = {
     'owner': 'cuongvh',
@@ -17,14 +18,10 @@ with DAG(
     catchup=False,
     tags=["cuongvh", "airflow_2.6"]
 ) as dag:
+    task1 = RedshiftDataTrigger(
+        aws_conn_id='aws_redshift'
+    )
 
-    t = RedshiftSQLOperator(
-        task_id='stock_quant_by_store_v01',
-        sql='''
-            
-        ''',
-        params={
-            "schema": "dev",
-            "table": "..."
-        }
+    task2 = RedshiftDataHook(
+
     )
