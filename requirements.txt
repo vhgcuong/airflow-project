@@ -1,5 +1,5 @@
 scikit-learn==0.24.2
 matplotlib==3.7.5
 apache-airflow-providers-amazon==8.19.0
-apache-airflow-providers-postgres
+apache-airflow-providers-postgres==5.10.2
 apache-airflow-providers-sqlite>=2.1.0

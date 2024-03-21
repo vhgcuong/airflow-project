@@ -1,7 +1,10 @@
+import csv
+import logging
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 default_args = {
     'owner': 'cuongvh',
@@ -9,18 +12,33 @@ default_args = {
     'retry_delay': timedelta(minutes=2)
 }
 
-def postgres_to_s3():
+def postgres_to_s3(ds_nodash, next_ds_nodash):
     # step 1: query data from postgresql db and save into text file
-    pass
+    hook = PostgresHook(postgres_conn_id="postgres_localhost")
+    conn = hook.get_conn()
+    cursor = conn.cursor()
+    cursor.execute("select * from orders where date >= %s and date < %s",
+                   (ds_nodash, next_ds_nodash))
+    with open(f"tmp/get_orders_{ds_nodash}.txt", "w") as f:
+        csv_writer = csv.writer(f)
+        csv_writer.writerow([i[0] for i in cursor.description])
+        csv_writer.writerows(cursor)
+    cursor.close()
+    conn.close()
 
+    logging.info("Saved orders data in text file: %s", f"tmp/get_orders_{ds_nodash}.txt")
     # step 2: upload text file into s3
     pass
 
 with DAG(
-    dag_id='dag_with_postgres_hooks_v05',
+    dag_id='dag_with_postgres_hooks_v10',
     default_args=default_args,
-    start_date=datetime(2024, 3, 1),
+    start_date=datetime(2024, 3, 20),
     schedule='0 4 * * *',
     tags=["cuongvh", "airflow_2.6"],
 ) as dag:
-    pass
+    task1 = PythonOperator(
+        task_id="postgres_to_s3",
+        python_callable=postgres_to_s3
+    )
+    task1
