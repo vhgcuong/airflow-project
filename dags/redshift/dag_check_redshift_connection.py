@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
-from airflow.operators.bash import BashOperator
 
 default_args = {
     'owner': 'cuongvh',
@@ -36,9 +35,4 @@ with DAG(
         dag=dag
     )
 
-    bash_vim = BashOperator(
-        task_id='bash_vim',
-        bash_command="vim --version"
-    )
-
-    check_connection_task >> bash_vim
+    check_connection_task
